@@ -33,30 +33,6 @@ if ('IntersectionObserver' in window) {
   reveals.forEach((el) => el.classList.add('is-in'));
 }
 
-// Count-up stats
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const counters = document.querySelectorAll('[data-count]');
-const runCount = (el) => {
-  const target = Number(el.dataset.count);
-  const suffix = el.querySelector('span').outerHTML;
-  if (reduceMotion) { el.innerHTML = target + suffix; return; }
-  const start = performance.now();
-  const step = (now) => {
-    const p = Math.min((now - start) / 1400, 1);
-    el.innerHTML = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
-    if (p < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-};
-if ('IntersectionObserver' in window) {
-  const co = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { if (e.isIntersecting) { runCount(e.target); co.unobserve(e.target); } });
-  }, { threshold: 0.5 });
-  counters.forEach((el) => co.observe(el));
-} else {
-  counters.forEach(runCount);
-}
-
 // Email link
 document.querySelectorAll('.js-email').forEach((a) => {
   a.href = `mailto:${CONTACT_EMAIL}`;
